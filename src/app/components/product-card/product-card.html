@@ -1,0 +1,10 @@
+<div class="product-card">
+  <h3>{{ product.nombre }}</h3>
+  <p>{{ product.descripcion }}</p>
+
+  <p class="price">
+    Precio: {{ product.precio | currency:'USD':'symbol' }}
+  </p>
+
+  <button (click)="addToCart()">Agregar al carrito</button>
+</div>

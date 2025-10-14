@@ -1,0 +1,25 @@
+<p>cart works!</p>
+<ng-template #cartModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="modal-basic-title">Carrito de Compras</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="cartProducts.length > 0; else emptyCart">
+      <ul>
+        <li *ngFor="let product of cartProducts">
+          {{ product.product.nombre }} - {{ product.product.precio | currency:'USD' }}
+          <button class="btn btn-sm btn-danger" (click)="removeFromCart(product)">Eliminar</button>
+        </li>
+      </ul>
+    </div>
+    <ng-template #emptyCart>
+      <p>El carrito está vacío.</p>
+    </ng-template>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cerrar</button>
+  </div>
+</ng-template>
+
+<button class="btn btn-primary" (click)="openCartModal(cartModal)">Abrir Carrito</button>

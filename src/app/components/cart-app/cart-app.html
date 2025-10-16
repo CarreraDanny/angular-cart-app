@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Carro de Compras- Angular</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <a class="navbar-brand" href="#">Carro de Compras - Angular</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -10,17 +11,18 @@
           <a class="nav-link" href="#">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" (click)="openCartDialog(cartDialog)">Cart ({{ getCartTotal() | currency:'USD' }})</a>
+          <!-- Usamos el async pipe para mostrar el total -->
+          <a class="nav-link" href="#" (click)="openCartDialog(cartDialog)">
+            Cart ({{ (cart$ | async)?.total | currency:'USD' }})
+          </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Profile</a>
-        </li>
+        
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Barra de búsqueda arriba de los productos -->
+<!-- Barra de búsqueda -->
 <div class="search-bar mb-4">
   <div class="input-group">
     <input type="text" class="form-control" placeholder="Buscar productos..." (input)="onSearch($event.target.value)">
@@ -28,7 +30,7 @@
   </div>
 </div>
 
-<!-- Mantener el catálogo siempre visible -->
+<!-- Catálogo de productos -->
 <div class="products-container row g-3">
   <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let product of filteredProducts">
     <div class="card h-100 shadow-sm">
@@ -44,7 +46,7 @@
   </div>
 </div>
 
-<!-- Modal para mostrar el carrito como un diálogo -->
+<!-- Modal del carrito -->
 <ng-template #cartDialog>
   <div class="modal-content">
     <div class="modal-header bg-primary text-white">
@@ -52,18 +54,24 @@
       <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeCartDialog()"></button>
     </div>
     <div class="modal-body">
-      <div *ngIf="cartProducts.length > 0; else emptyCart">
-        <ul class="list-group">
-          <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let product of cartProducts">
-            <span>{{ product.product.nombre }}</span>
-            <span>{{ product.product.precio | currency:'USD' }}</span>
-            <button class="btn btn-sm btn-danger" (click)="removeFromCart(product)">Eliminar</button>
-          </li>
-        </ul>
-      </div>
-      <ng-template #emptyCart>
-        <p class="text-center text-muted">El carrito está vacío.</p>
-      </ng-template>
+      <!-- Usamos async para mostrar productos -->
+      <ng-container *ngIf="cart$ | async as cart">
+        <div *ngIf="cart.items.length > 0; else emptyCart">
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center"
+              *ngFor="let product of cart.items">
+              <span>{{ product.nombre }}</span>
+              <span>{{ product.precio | currency:'USD' }}</span>
+              <button class="btn btn-sm btn-danger" (click)="removeFromCart(product.id)">
+                Eliminar
+              </button>
+            </li>
+          </ul>
+        </div>
+        <ng-template #emptyCart>
+          <p class="text-center text-muted">El carrito está vacío.</p>
+        </ng-template>
+      </ng-container>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="closeCartDialog()">Cerrar</button>
